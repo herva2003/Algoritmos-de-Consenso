@@ -71,4 +71,10 @@ python -m unittest discover -s tests
 
 ## Conclusão
 Este projeto demonstra a implementação do algoritmo de consenso Raft em um ambiente distribuído, incluindo a simulação de falhas de nó e a recuperação automática. A configuração detalhada e os exemplos de uso fornecem uma base sólida para explorar e entender o comportamento de sistemas distribuídos resilientes.
+
+### Membros envolvidos no desenvolvimento
+- GABRIEL VICTOR GRACINI HERVATIN, RA 22016387 
+- GUSTAVO FERNANDES BEZERRA, RA 20127734 
+- THEODORO PESCUMA MIMURA, RA 22018164 
 ```
+
