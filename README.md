@@ -1,4 +1,3 @@
-```markdown
 # Raft Consensus Algorithm Simulation
 
 ## Descrição do Projeto
@@ -59,4 +58,3 @@ curl http://localhost:5000/status
 
 ## Logs
 Os logs detalhados de cada fase do consenso são armazenados em `logs/log.txt`.
-```
