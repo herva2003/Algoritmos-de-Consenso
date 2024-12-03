@@ -40,6 +40,7 @@ Para simular uma falha de nó, você pode usar o seguinte comando:
 curl -X POST -H "Content-Type: application/json" -d '{"node": "http://localhost:5001", "duration": 10}' http://localhost:5000/simulate_failure
 ```
 Esse comando simulará uma falha no nó `http://localhost:5001` por 10 segundos.
+Quando o nó lider mudar, será necessário alterar o comando de falha para o nó lider atual
 
 ### Verificar o Status dos Nós
 Para verificar o status dos nós, você pode acessar:
