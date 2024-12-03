@@ -40,7 +40,7 @@ Para simular uma falha de nó, você pode usar o seguinte comando:
 curl -X POST -H "Content-Type: application/json" -d '{"node": "http://localhost:5001", "duration": 10}' http://localhost:5000/simulate_failure
 ```
 Esse comando simulará uma falha no nó `http://localhost:5001` por 10 segundos.
-Quando o nó lider mudar, será necessário alterar o comando de falha para o nó lider atual
+Quando o nó líder mudar, será necessário alterar o comando de falha para o nó líder atual.
 
 ### Verificar o Status dos Nós
 Para verificar o status dos nós, você pode acessar:
@@ -54,8 +54,21 @@ curl http://localhost:5000/status
 3. **Segurança**: O sistema garante que apenas entradas comprometidas sejam aplicadas ao estado.
 
 ## Falhas Simuladas
-- **Falha de Nó**: Nós podem falhar aleatoriamente durante a simulação.
-- **Recuperação**: Nós tentam se recuperar e retomar a comunicação com o líder.
+- **Falha de Nó**: Nós podem falhar aleatoriamente durante a simulação. Utilizando a rota `/simulate_failure`, é possível simular falhas de nó especificando o nó e a duração da falha.
+- **Recuperação**: Nós tentam se recuperar e retomar a comunicação com o líder. Após a falha simulada, o nó recuperado deve detectar o termo superior e reverter para o estado de seguidor.
 
 ## Logs
 Os logs detalhados de cada fase do consenso são armazenados em `logs/log.txt`.
+
+### Testes
+O arquivo `tests/test_raft.py` contém testes unitários para verificar o comportamento do sistema em diferentes cenários de falha e recuperação.
+
+#### Executar Testes
+Para executar os testes, utilize o comando:
+```bash
+python -m unittest discover -s tests
+```
+
+## Conclusão
+Este projeto demonstra a implementação do algoritmo de consenso Raft em um ambiente distribuído, incluindo a simulação de falhas de nó e a recuperação automática. A configuração detalhada e os exemplos de uso fornecem uma base sólida para explorar e entender o comportamento de sistemas distribuídos resilientes.
+```

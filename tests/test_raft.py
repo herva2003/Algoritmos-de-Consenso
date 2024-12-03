@@ -18,5 +18,10 @@ class TestRaft(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "Election started")
 
+    def test_simulate_failure(self):
+        response = requests.post("http://localhost:5000/simulate_failure", json={"node": "http://localhost:5001", "duration": 5})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.text, "Failure simulation started")
+
 if __name__ == "__main__":
     unittest.main()
