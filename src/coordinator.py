@@ -28,8 +28,16 @@ def status():
             status[node] = f"Error: {e}"
     return jsonify(status), 200
 
+@app.route('/simulate_failure', methods=['POST'])
+def simulate_failure():
+    data = request.get_json()
+    node = data['node']
+    duration = data['duration']
+    log_message(f"Coordinator: Simulating failure for {node} for {duration} seconds")
+    response = requests.post(f"{node}/simulate_failure", json={"duration": duration})
+    log_message(f"Coordinator: Failure simulation request sent to {node}, response: {response.text}")
+    return "Failure simulation started", 200
+
 if __name__ == "__main__":
     threading.Thread(target=lambda: app.run(port=5000)).start()
     time.sleep(1)  # Give the server time to start
-    # Optionally, start the election automatically
-    requests.post("http://localhost:5000/start_election")

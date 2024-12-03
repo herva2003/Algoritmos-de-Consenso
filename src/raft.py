@@ -19,9 +19,10 @@ class RaftNode:
             "leader_id": None,
         }
         self.votes_received = 0
-        self.election_timeout = random.uniform(1, 2)  # Aumentar intervalo de timeout de eleição
-        self.heartbeat_interval = 1  # Aumentar intervalo de heartbeats
+        self.election_timeout = random.uniform(2, 3)  # Aumentar intervalo de timeout de eleição
+        self.heartbeat_interval = 0.5  # Intervalo de heartbeats
         self.last_heartbeat = time.time()
+        self.running = True
 
         self.app = Flask(__name__)
         self.setup_routes()
@@ -65,6 +66,13 @@ class RaftNode:
         def status():
             return jsonify(self.state), 200
 
+        @self.app.route('/simulate_failure', methods=['POST'])
+        def simulate_failure_route():
+            data = request.get_json()
+            duration = data['duration']
+            threading.Thread(target=self.simulate_failure, args=(duration,)).start()
+            return "Failure simulation started", 200
+
     def check_node_availability(self, node):
         try:
             response = requests.get(f"{node}/status")
@@ -75,6 +83,9 @@ class RaftNode:
         return False
 
     def start_election(self):
+        if self.state['role'] == 'leader':
+            return  # O líder não deve iniciar uma nova eleição
+
         self.state['term'] += 1
         self.state['voted_for'] = self.node_id
         self.votes_received = 1
@@ -99,7 +110,7 @@ class RaftNode:
 
     def send_heartbeats(self):
         log_message(f"Node {self.node_id} sending heartbeats")
-        while self.state['role'] == 'leader':
+        while self.state['role'] == 'leader' and self.running:
             for node in self.nodes:
                 if node != self.node_id and self.check_node_availability(node):
                     try:
@@ -113,11 +124,22 @@ class RaftNode:
                         log_message(f"Error sending append entries to {node}: {e}")
             time.sleep(self.heartbeat_interval)
 
+    def simulate_failure(self, duration):
+        log_message(f"Node {self.node_id} simulating failure for {duration} seconds")
+        self.running = False
+        time.sleep(duration)
+        self.running = True
+        log_message(f"Node {self.node_id} recovered from failure")
+
     def run(self):
         threading.Thread(target=lambda: self.app.run(port=int(self.node_id.split(":")[-1]))).start()
         time.sleep(1)  # Give the server time to start
 
         while True:
+            if not self.running:
+                time.sleep(1)
+                continue
+
             if self.state['role'] == 'follower':
                 if time.time() - self.last_heartbeat > self.election_timeout:
                     self.start_election()
